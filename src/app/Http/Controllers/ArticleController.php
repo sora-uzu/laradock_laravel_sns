@@ -15,12 +15,17 @@ class ArticleController extends Controller
 
     public function index()
     {
+        \
+        Log::warning('index method');
         $articles = Article::all()->sortByDesc('created_at');
 
         return view('articles.index', ['articles' => $articles]);
     }
 
     public function create(){
+        \
+        Log::warning('crate method');
+        
         return view('articles.create');
     }
 
@@ -52,5 +57,26 @@ class ArticleController extends Controller
     public function show(Article $article)
     {
         return view('articles.show', ['article' => $article]);
-    }    
+    }
+
+    public function like(Request $request, Article $article)
+    {
+        $article->likes()->detach($request->user()->id);
+        $article->likes()->attach($request->user()->id);
+
+        return[
+            'id'=> $article->id,
+            'countLikes'=> $article->count_likes,
+        ];
+    }
+
+    public function unlike(Request $request, Article $article)
+    {
+        $article->likes()->detach($request->user()->id);
+
+        return [
+            'id' => $article->id,
+            'countLikes' => $article->count_likes,
+        ];
+    }
 }

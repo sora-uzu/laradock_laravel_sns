@@ -13,6 +13,9 @@ class ArticleRequest extends FormRequest
      */
     public function authorize()
     {
+        \
+        Log::warning('authorize');
+        
         return true;
     }
 
