@@ -12,10 +12,7 @@ class ArticleRequest extends FormRequest
      * @return bool
      */
     public function authorize()
-    {
-        \
-        Log::warning('authorize');
-        
+    {        
         return true;
     }
 
@@ -30,6 +27,7 @@ class ArticleRequest extends FormRequest
             
             'title' => 'required|max:50',
             'body' => 'required|max:500',
+            'tags' =>  'json|regex:/^(?!.*\s).+$/u|regex:/^(?!.*\/).*$/u',
 
         ];
     }
@@ -39,6 +37,16 @@ class ArticleRequest extends FormRequest
         return [
             'title' => 'タイトル',
             'body' => '本文',
+            'tags' => 'タグ',
         ];
+    }
+
+    public function passedValidation()
+    {
+        $this->tags = collect(json_decode($this->tags))
+        ->slice(0,5)
+        ->map(function($requestTag){
+            return $requestTag->text;
+        });
     }
 }
